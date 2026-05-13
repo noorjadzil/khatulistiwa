@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Setting App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:#0f172a;
+min-height:100vh;
+overflow-x:hidden;
+color:white;
+padding:16px;
+}
+
+.bg{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top left,#2563eb55,transparent 35%),
+radial-gradient(circle at bottom right,#06b6d455,transparent 35%),
+linear-gradient(135deg,#020617,#0f172a,#111827);
+z-index:-2;
+}
+
+.blur1,
+.blur2{
+position:fixed;
+border-radius:50%;
+filter:blur(100px);
+z-index:-1;
+}
+
+.blur1{
+width:260px;
+height:260px;
+background:#2563eb55;
+top:-70px;
+left:-70px;
+}
+
+.blur2{
+width:260px;
+height:260px;
+background:#06b6d455;
+bottom:-70px;
+right:-70px;
+}
+
+.container{
+max-width:480px;
+margin:auto;
+}
+
+.card{
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(24px);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:32px;
+padding:22px;
+box-shadow:
+0 10px 40px rgba(0,0,0,0.35),
+inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.header{
+text-align:center;
+margin-bottom:24px;
+}
+
+.logo{
+font-size:34px;
+font-weight:900;
+letter-spacing:3px;
+background:linear-gradient(90deg,#60a5fa,#22d3ee);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.sub{
+margin-top:6px;
+font-size:13px;
+color:#94a3b8;
+letter-spacing:1px;
+}
+
+.section{
+margin-bottom:18px;
+padding:18px;
+border-radius:24px;
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(255,255,255,0.06);
+}
+
+.section-title{
+font-size:14px;
+font-weight:800;
+margin-bottom:14px;
+color:#e2e8f0;
+letter-spacing:0.5px;
+}
+
+label{
+display:block;
+margin-bottom:8px;
+font-size:13px;
+font-weight:700;
+color:#cbd5e1;
+}
+
+input{
+width:100%;
+padding:15px;
+border:none;
+outline:none;
+border-radius:18px;
+font-size:15px;
+margin-bottom:12px;
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.08);
+color:white;
+transition:0.25s;
+}
+
+input:focus{
+border-color:#38bdf8;
+box-shadow:0 0 0 4px rgba(56,189,248,0.15);
+}
+
+input[type="color"]{
+height:55px;
+padding:6px;
+cursor:pointer;
+}
+
+button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:18px;
+font-size:14px;
+font-weight:800;
+cursor:pointer;
+transition:0.25s;
+color:white;
+}
+
+button:active{
+transform:scale(0.98);
+}
+
+.btn-primary{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+box-shadow:0 10px 30px rgba(37,99,235,0.35);
+}
+
+.btn-green{
+background:linear-gradient(135deg,#059669,#10b981);
+box-shadow:0 10px 25px rgba(16,185,129,0.30);
+margin-top:12px;
+}
+
+.btn-gray{
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.08);
+margin-top:14px;
+}
+
+.row{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px;
+margin-top:10px;
+border-radius:18px;
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(255,255,255,0.06);
+}
+
+.item-info{
+flex:1;
+overflow:hidden;
+}
+
+.item-name{
+font-size:15px;
+font-weight:700;
+color:#f8fafc;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.item-price{
+font-size:12px;
+margin-top:3px;
+color:#94a3b8;
+}
+
+.price-input{
+width:95px;
+margin:0;
+text-align:center;
+padding:12px;
+font-weight:700;
+}
+
+.delete-btn{
+width:48px;
+height:48px;
+border-radius:16px;
+background:rgba(239,68,68,0.12);
+border:1px solid rgba(239,68,68,0.18);
+font-size:18px;
+padding:0;
+flex-shrink:0;
+}
+
+.flex{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.flex input{
+margin-bottom:0;
+}
+
+.plus-btn{
+width:58px;
+height:54px;
+padding:0;
+border-radius:18px;
+font-size:24px;
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+flex-shrink:0;
+}
+
+.empty{
+padding:18px;
+text-align:center;
+font-size:14px;
+border-radius:18px;
+background:rgba(255,255,255,0.04);
+border:1px dashed rgba(255,255,255,0.08);
+color:#94a3b8;
+margin-top:10px;
+}
+
+.loading{
+padding:18px;
+text-align:center;
+color:#94a3b8;
+font-weight:700;
+}
+
+.footer{
+margin-top:22px;
+text-align:center;
+font-size:12px;
+color:#64748b;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="blur1"></div>
+<div class="blur2"></div>
+
+<div class="container">
+
+<div class="card">
+
+<div class="header">
+<div class="logo">MAQSHOF</div>
+<div class="sub">SETTING PANEL</div>
+</div>
+
+<!-- LABEL -->
+<div class="section">
+
+<div class="section-title">
+🏷️ Custom Label
+</div>
+
+<input
+type="text"
+id="labelApp"
+placeholder="Contoh : Kantin / Kas / Inventaris"
+>
+
+<button class="btn-primary" onclick="saveLabel()">
+Simpan Label
+</button>
+
+</div>
+
+<!-- THEME -->
+<div class="section">
+
+<div class="section-title">
+🎨 Warna Tampilan
+</div>
+
+<label>Primary Color</label>
+<input type="color" id="colorPrimary">
+
+<label>Background Color</label>
+<input type="color" id="colorBg">
+
+<button class="btn-primary" onclick="saveTheme()">
+Simpan Warna
+</button>
+
+</div>
+
+<!-- WA -->
+<div class="section">
+
+<div class="section-title">
+📱 WhatsApp
+</div>
+
+<input type="text" id="wa1" placeholder="628xxx">
+<input type="text" id="wa2" placeholder="628xxx">
+<input type="text" id="wa3" placeholder="628xxx">
+<input type="text" id="wa4" placeholder="628xxx">
+
+<button class="btn-primary" onclick="saveWA()">
+Simpan Nomor
+</button>
+
+</div>
+
+<!-- ITEM -->
+<div class="section">
+
+<div class="section-title">
+🍔 Item & Harga
+</div>
+
+<div class="flex">
+
+<input
+type="text"
+id="namaItem"
+placeholder="Nama item"
+>
+
+<input
+type="number"
+id="hargaItem"
+placeholder="Harga"
+>
+
+<button onclick="tambahItem()" class="plus-btn">
++
+</button>
+
+</div>
+
+<div id="listItem" class="loading">
+Loading...
+</div>
+
+<button class="btn-green" onclick="undo()">
+↩️ Undo Hapus
+</button>
+
+</div>
+
+<button class="btn-gray" onclick="kembali()">
+⬅️ Kembali
+</button>
+
+<div class="footer">
+MAQSHOF • Smart Dashboard System
+</div>
+
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+
+firebase.initializeApp({
+databaseURL:"https://khatulistiwa-db7cc-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db=firebase.database();
+
+let lastDeleted=null;
+
+// LOAD ITEM
+function loadItems(){
+
+let list=document.getElementById("listItem");
+
+list.innerHTML=`
+<div class="loading">
+Loading...
+</div>
+`;
+
+db.ref("items").on("value",snap=>{
+
+list.innerHTML="";
+
+if(!snap.exists()){
+
+list.innerHTML=`
+<div class="empty">
+Belum ada item
+</div>
+`;
+
+return;
+
+}
+
+snap.forEach(c=>{
+
+let key=c.key;
+let data=c.val();
+
+let nama=data.nama || data;
+let harga=data.harga || 0;
+
+let div=document.createElement("div");
+
+div.className="row";
+
+div.innerHTML=`
+
+<div class="item-info">
+
+<div class="item-name">
+${nama}
+</div>
+
+<div class="item-price">
+Rp ${Number(harga).toLocaleString("id-ID")}
+</div>
+
+</div>
+
+<input
+type="number"
+value="${harga}"
+class="price-input"
+onchange="updateHarga('${key}',this.value)"
+>
+
+<button
+class="delete-btn"
+onclick="hapusItem('${key}')"
+>
+🗑️
+</button>
+
+`;
+
+list.appendChild(div);
+
+});
+
+});
+
+}
+
+// TAMBAH ITEM
+function tambahItem(){
+
+let nama=document.getElementById("namaItem").value.trim();
+
+let harga=document.getElementById("hargaItem").value;
+
+if(!nama || !harga){
+
+alert("Isi nama dan harga");
+return;
+
+}
+
+db.ref("items").push({
+nama:nama,
+harga:Number(harga)
+});
+
+document.getElementById("namaItem").value="";
+document.getElementById("hargaItem").value="";
+
+}
+
+// UPDATE HARGA
+function updateHarga(key,harga){
+
+db.ref("items/"+key+"/harga")
+.set(Number(harga));
+
+}
+
+// HAPUS
+function hapusItem(key){
+
+db.ref("items/"+key)
+.once("value")
+.then(snap=>{
+
+lastDeleted={
+key:key,
+value:snap.val()
+};
+
+db.ref("items/"+key).remove();
+
+});
+
+}
+
+// UNDO
+function undo(){
+
+if(!lastDeleted){
+
+alert("Tidak ada item yang dihapus");
+return;
+
+}
+
+db.ref("items/"+lastDeleted.key)
+.set(lastDeleted.value);
+
+lastDeleted=null;
+
+}
+
+// SAVE LABEL
+function saveLabel(){
+
+let val=document.getElementById("labelApp").value;
+
+db.ref("config/label").set(val);
+
+alert("Label disimpan");
+
+}
+
+// SAVE THEME
+function saveTheme(){
+
+let primary=document.getElementById("colorPrimary").value;
+
+let bg=document.getElementById("colorBg").value;
+
+db.ref("config/theme").set({
+primary:primary,
+bg:bg
+});
+
+alert("Warna disimpan");
+
+}
+
+// SAVE WA
+function saveWA(){
+
+let data={
+
+wa1:document.getElementById("wa1").value,
+wa2:document.getElementById("wa2").value,
+wa3:document.getElementById("wa3").value,
+wa4:document.getElementById("wa4").value
+
+};
+
+db.ref("config/wa").set(data);
+
+alert("Nomor WA disimpan");
+
+}
+
+// LOAD CONFIG
+function loadConfig(){
+
+db.ref("config").once("value",snap=>{
+
+let data=snap.val() || {};
+
+if(data.label){
+
+document.getElementById("labelApp").value=data.label;
+
+}
+
+if(data.theme){
+
+document.getElementById("colorPrimary").value=
+data.theme.primary || "#2563eb";
+
+document.getElementById("colorBg").value=
+data.theme.bg || "#0f172a";
+
+}
+
+if(data.wa){
+
+document.getElementById("wa1").value=data.wa.wa1 || "";
+document.getElementById("wa2").value=data.wa.wa2 || "";
+document.getElementById("wa3").value=data.wa.wa3 || "";
+document.getElementById("wa4").value=data.wa.wa4 || "";
+
+}
+
+});
+
+}
+
+// BACK
+function kembali(){
+
+window.location.href="index.html";
+
+}
+
+// INIT
+window.onload=function(){
+
+loadItems();
+loadConfig();
+
+}
+
+</script>
+
+</body>
+</html>
