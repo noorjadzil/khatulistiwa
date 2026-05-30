@@ -102,7 +102,7 @@ line-height:1.5;
 }
 
 .container{
-max-width:520px;
+max-width:540px;
 margin:auto;
 padding:14px;
 }
@@ -144,8 +144,9 @@ margin-bottom:6px;
 }
 
 .stat strong{
-font-size:19px;
-line-height:1.2;
+font-size:18px;
+line-height:1.25;
+word-break:break-word;
 }
 
 .section-title{
@@ -219,6 +220,48 @@ gap:10px;
 
 .input-group{
 margin-bottom:12px;
+position:relative;
+}
+
+.suggestion-box{
+display:none;
+position:absolute;
+left:0;
+right:0;
+top:calc(100% + 6px);
+background:#0b1220;
+border:1px solid rgba(125,211,252,.22);
+border-radius:18px;
+padding:6px;
+z-index:15;
+box-shadow:0 18px 50px rgba(0,0,0,.45);
+max-height:210px;
+overflow:auto;
+}
+
+.suggestion-box.show{
+display:block;
+}
+
+.suggestion-item{
+padding:11px 12px;
+border-radius:14px;
+font-size:14px;
+font-weight:800;
+color:#e2e8f0;
+cursor:pointer;
+display:flex;
+justify-content:space-between;
+gap:10px;
+}
+
+.suggestion-item:hover{
+background:rgba(56,189,248,.14);
+}
+
+.suggestion-item small{
+color:#94a3b8;
+font-weight:700;
 }
 
 .live-box{
@@ -334,6 +377,13 @@ margin-bottom:10px;
 font-weight:900;
 font-size:16px;
 line-height:1.35;
+}
+
+.brand{
+font-size:13px;
+color:#bae6fd;
+font-weight:800;
+margin-top:2px;
 }
 
 .badge{
@@ -485,7 +535,7 @@ to{transform:translateY(0);opacity:1}
 padding:17px;
 border-radius:26px;
 }
-.grid-3{
+.grid-2,.grid-3{
 grid-template-columns:1fr;
 }
 .logo{
@@ -510,7 +560,7 @@ grid-template-columns:1fr;
 
 <div class="header">
 <div class="logo">NOZIL</div>
-<div class="sub">Aplikasi Catatan Pengeluaran & Pembanding Harga Satuan</div>
+<div class="sub">Catatan Pengeluaran, Merek, Toko, dan Pembanding Harga Termurah</div>
 </div>
 
 <div class="container">
@@ -541,9 +591,18 @@ grid-template-columns:1fr;
 </div>
 </div>
 
+<div class="grid-2">
 <div class="input-group">
-<label>Nama Barang</label>
-<input type="text" id="nama" placeholder="Contoh: Minyak Goreng">
+<label>Nama Barang / Kategori</label>
+<input type="text" id="kategoriBarang" placeholder="Contoh: Minyak Goreng" autocomplete="off">
+<div class="suggestion-box" id="suggestKategori"></div>
+</div>
+
+<div class="input-group">
+<label>Merek / Brand</label>
+<input type="text" id="merek" placeholder="Contoh: Sunco" autocomplete="off">
+<div class="suggestion-box" id="suggestMerek"></div>
+</div>
 </div>
 
 <div class="grid-3">
@@ -572,17 +631,19 @@ grid-template-columns:1fr;
 <div class="grid-2">
 <div class="input-group">
 <label>Toko / Tempat</label>
-<input type="text" id="toko" placeholder="Contoh: Indomaret">
+<input type="text" id="toko" placeholder="Contoh: Superindo" autocomplete="off">
+<div class="suggestion-box" id="suggestToko"></div>
 </div>
 
 <div class="input-group">
-<label>Kategori</label>
-<select id="kategori">
+<label>Jenis Pengeluaran</label>
+<select id="jenis">
 <option>Kebutuhan Dapur</option>
 <option>Sembako</option>
 <option>Minuman</option>
 <option>Makanan</option>
 <option>Sabun & Kebersihan</option>
+<option>ATK</option>
 <option>Transport</option>
 <option>Listrik / Pulsa</option>
 <option>Lainnya</option>
@@ -592,7 +653,7 @@ grid-template-columns:1fr;
 
 <div class="input-group">
 <label>Catatan</label>
-<textarea id="catatan" placeholder="Contoh: Promo, beli 2, rasa lebih enak, kualitas bagus..."></textarea>
+<textarea id="catatan" placeholder="Contoh: Promo, kualitas bagus, cocok untuk kantin, harga normal/promo..."></textarea>
 </div>
 
 <div class="live-box">
@@ -605,7 +666,7 @@ grid-template-columns:1fr;
 <strong id="previewSatuan">Rp 0 / ml</strong>
 </div>
 <div class="live-row">
-<span>Keterangan</span>
+<span>Status harga</span>
 <strong id="previewKet">Masukkan ukuran dan harga</strong>
 </div>
 </div>
@@ -623,11 +684,11 @@ grid-template-columns:1fr;
 
 <div class="grid-2">
 <div class="stat">
-<span>Termurah</span>
+<span>Termurah Bulan Ini</span>
 <strong id="termurah">-</strong>
 </div>
 <div class="stat">
-<span>Termahal</span>
+<span>Termahal Bulan Ini</span>
 <strong id="termahal">-</strong>
 </div>
 </div>
@@ -642,9 +703,9 @@ grid-template-columns:1fr;
 <div class="section-title">Data Belanja</div>
 
 <div class="searchbar">
-<input type="text" id="cari" placeholder="Cari barang / toko..." oninput="renderData()">
+<input type="text" id="cari" placeholder="Cari barang, merek, toko..." oninput="renderData()">
 <select id="filterSatuan" onchange="renderData()">
-<option value="">Semua satuan</option>
+<option value="">Semua</option>
 <option value="ml">ml</option>
 <option value="gram">gram</option>
 <option value="pcs">pcs</option>
@@ -659,7 +720,7 @@ grid-template-columns:1fr;
 </div>
 
 <div class="footer">
-NOZIL • Expense & Unit Price Tracker
+NOZIL • Smart Expense & Unit Price Tracker
 </div>
 
 </div>
@@ -676,12 +737,29 @@ NOZIL • Expense & Unit Price Tracker
 <div class="toast" id="toast">Berhasil</div>
 
 <script>
-const STORAGE_KEY = "nozil_pengeluaran_bulanan_v1";
+const STORAGE_KEY = "nozil_pengeluaran_bulanan_v2";
 
 let dataBelanja = [];
 let editId = null;
 
 const el = id => document.getElementById(id);
+
+const defaultKategoriBarang = [
+"Minyak Goreng","Sabun Cuci Piring","Beras","Gula","Tepung Terigu","Kecap",
+"Saus Sambal","Teh","Kopi","Susu","Telur","Air Mineral","Deterjen",
+"Pewangi Pakaian","Tisu","Gas LPG","Mie Instan","Bawang Merah","Bawang Putih"
+];
+
+const defaultMerek = [
+"Sunco","Bimoli","Filma","Tropical","Fortune","Sania","Sunlight","Mama Lemon",
+"Ekonomi","Rinso","So Klin","Molto","Indomie","Aqua","Le Minerale","ABC",
+"Bango","Rose Brand","Segitiga Biru","Kapal Api","Sariwangi"
+];
+
+const defaultToko = [
+"Superindo","Indomaret","Alfamart","Alfamidi","Hypermart","Transmart",
+"Pasar","Grosir","Toko Sembako","Shopee","Tokopedia","Lazada"
+];
 
 function rupiah(n){
 return new Intl.NumberFormat("id-ID",{
@@ -752,6 +830,7 @@ setTimeout(()=>t.classList.remove("show"),1800);
 }
 
 function updatePreview(){
+let kategoriBarang = el("kategoriBarang").value.trim();
 let ukuran = Number(el("ukuran").value || 0);
 let satuan = el("satuan").value;
 let harga = Number(el("harga").value || 0);
@@ -763,46 +842,70 @@ el("previewSatuan").textContent = `${rupiah(per)} / ${normal.satuanDasar}`;
 
 if(!ukuran || !harga){
 el("previewKet").textContent = "Masukkan ukuran dan harga";
-}else if(per <= 10){
-el("previewKet").textContent = "Murah untuk dibandingkan";
-}else if(per <= 30){
-el("previewKet").textContent = "Sedang, cek pembanding";
+return;
+}
+
+let pembanding = dataBelanja
+.filter(d => 
+d.kategoriBarang.toLowerCase() === kategoriBarang.toLowerCase() &&
+d.satuanDasar === normal.satuanDasar
+)
+.sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan);
+
+if(!pembanding.length){
+el("previewKet").textContent = "Belum ada pembanding";
+return;
+}
+
+let termurah = pembanding[0];
+
+if(per < termurah.hargaPerSatuan){
+el("previewKet").textContent = "Lebih murah dari data lama";
+}else if(per === termurah.hargaPerSatuan){
+el("previewKet").textContent = "Sama dengan harga termurah";
 }else{
-el("previewKet").textContent = "Cukup mahal, bandingkan lagi";
+el("previewKet").textContent = `Lebih mahal dari ${termurah.merek || termurah.kategoriBarang}`;
 }
 }
 
-["ukuran","satuan","harga"].forEach(id=>{
+["kategoriBarang","ukuran","satuan","harga"].forEach(id=>{
 el(id).addEventListener("input", updatePreview);
 el(id).addEventListener("change", updatePreview);
 });
 
 function resetForm(){
 editId = null;
-el("nama").value = "";
+el("kategoriBarang").value = "";
+el("merek").value = "";
 el("ukuran").value = "";
 el("satuan").value = "ml";
 el("harga").value = "";
 el("toko").value = "";
-el("kategori").value = "Kebutuhan Dapur";
+el("jenis").value = "Kebutuhan Dapur";
 el("catatan").value = "";
 el("tanggal").value = todayDate();
 updatePreview();
 }
 
 function simpanData(){
-let nama = el("nama").value.trim();
+let kategoriBarang = el("kategoriBarang").value.trim();
+let merek = el("merek").value.trim();
 let ukuran = Number(el("ukuran").value);
 let satuan = el("satuan").value;
 let harga = Number(el("harga").value);
 let toko = el("toko").value.trim();
-let kategori = el("kategori").value;
+let jenis = el("jenis").value;
 let catatan = el("catatan").value.trim();
 let tanggal = el("tanggal").value || todayDate();
 let bulan = el("bulan").value || currentMonth();
 
-if(!nama){
-alert("Nama barang belum diisi");
+if(!kategoriBarang){
+alert("Nama Barang / Kategori belum diisi. Contoh: Minyak Goreng");
+return;
+}
+
+if(!merek){
+alert("Merek / Brand belum diisi. Contoh: Sunco");
 return;
 }
 
@@ -820,7 +923,9 @@ let normal = normalisasiUkuran(ukuran, satuan);
 
 let item = {
 id: editId || Date.now().toString(),
-nama,
+kategoriBarang,
+merek,
+nama: `${kategoriBarang} - ${merek}`,
 ukuran,
 satuan,
 ukuranDasar: normal.nilai,
@@ -828,7 +933,7 @@ satuanDasar: normal.satuanDasar,
 harga,
 hargaPerSatuan: hargaPerSatuan(ukuran, satuan, harga),
 toko,
-kategori,
+jenis,
 catatan,
 tanggal,
 bulan,
@@ -860,9 +965,10 @@ let satuan = el("filterSatuan").value;
 
 let arr = dataBulanAktif().filter(d=>{
 let cocokCari = !cari || 
-d.nama.toLowerCase().includes(cari) ||
+(d.kategoriBarang || "").toLowerCase().includes(cari) ||
+(d.merek || "").toLowerCase().includes(cari) ||
 (d.toko || "").toLowerCase().includes(cari) ||
-(d.kategori || "").toLowerCase().includes(cari);
+(d.jenis || "").toLowerCase().includes(cari);
 
 let cocokSatuan = !satuan || d.satuanDasar === satuan || d.satuan === satuan;
 
@@ -870,10 +976,10 @@ return cocokCari && cocokSatuan;
 });
 
 arr.sort((a,b)=>{
-if(a.nama.toLowerCase() === b.nama.toLowerCase()){
+if((a.kategoriBarang || "").toLowerCase() === (b.kategoriBarang || "").toLowerCase()){
 return a.hargaPerSatuan - b.hargaPerSatuan;
 }
-return a.nama.localeCompare(b.nama);
+return (a.kategoriBarang || "").localeCompare(b.kategoriBarang || "");
 });
 
 let total = dataBulanAktif().reduce((sum,d)=>sum + Number(d.harga || 0),0);
@@ -882,35 +988,36 @@ el("jumlahData").textContent = `${dataBulanAktif().length} item`;
 
 if(dataBulanAktif().length){
 let sorted = [...dataBulanAktif()].sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan);
-el("termurah").textContent = `${sorted[0].nama} • ${rupiah(sorted[0].hargaPerSatuan)}/${sorted[0].satuanDasar}`;
-el("termahal").textContent = `${sorted[sorted.length-1].nama} • ${rupiah(sorted[sorted.length-1].hargaPerSatuan)}/${sorted[sorted.length-1].satuanDasar}`;
+el("termurah").textContent = `${sorted[0].kategoriBarang} ${sorted[0].merek} • ${rupiah(sorted[0].hargaPerSatuan)}/${sorted[0].satuanDasar}`;
+el("termahal").textContent = `${sorted[sorted.length-1].kategoriBarang} ${sorted[sorted.length-1].merek} • ${rupiah(sorted[sorted.length-1].hargaPerSatuan)}/${sorted[sorted.length-1].satuanDasar}`;
 }else{
 el("termurah").textContent = "-";
 el("termahal").textContent = "-";
 }
 
 if(!arr.length){
-list.innerHTML = `<div class="empty">Belum ada data untuk bulan ini.<br>Masukkan contoh: Minyak Goreng 1000 ml harga 20000.</div>`;
+list.innerHTML = `<div class="empty">Belum ada data untuk bulan ini.<br>Contoh: Minyak Goreng • Sunco • 1000 ml • Rp 20.000.</div>`;
 return;
 }
 
-let minByName = {};
+let minByKategori = {};
 arr.forEach(d=>{
-let key = d.nama.toLowerCase().trim() + "_" + d.satuanDasar;
-if(!minByName[key] || d.hargaPerSatuan < minByName[key]){
-minByName[key] = d.hargaPerSatuan;
+let key = (d.kategoriBarang || "").toLowerCase().trim() + "_" + d.satuanDasar;
+if(!minByKategori[key] || d.hargaPerSatuan < minByKategori[key]){
+minByKategori[key] = d.hargaPerSatuan;
 }
 });
 
 list.innerHTML = arr.map(d=>{
-let key = d.nama.toLowerCase().trim() + "_" + d.satuanDasar;
-let best = d.hargaPerSatuan === minByName[key];
+let key = (d.kategoriBarang || "").toLowerCase().trim() + "_" + d.satuanDasar;
+let best = d.hargaPerSatuan === minByKategori[key];
 
 return `
 <div class="item-card ${best ? "best" : ""}">
   <div class="item-top">
     <div>
-      <div class="item-name">${escapeHtml(d.nama)}</div>
+      <div class="item-name">${escapeHtml(d.kategoriBarang)}</div>
+      <div class="brand">Brand: ${escapeHtml(d.merek)}</div>
       <div class="note">${formatTanggal(d.tanggal)} • ${escapeHtml(d.toko || "Tanpa toko")}</div>
     </div>
     <span class="badge ${best ? "best" : "type"}">${best ? "TERMURAH" : d.satuanDasar}</span>
@@ -930,8 +1037,8 @@ return `
       <strong>${rupiah(d.hargaPerSatuan)}</strong>
     </div>
     <div>
-      <span>Kategori</span>
-      <strong>${escapeHtml(d.kategori)}</strong>
+      <span>Jenis</span>
+      <strong>${escapeHtml(d.jenis)}</strong>
     </div>
   </div>
 
@@ -969,12 +1076,13 @@ if(!d) return;
 editId = id;
 el("bulan").value = d.bulan;
 el("tanggal").value = d.tanggal;
-el("nama").value = d.nama;
+el("kategoriBarang").value = d.kategoriBarang || "";
+el("merek").value = d.merek || "";
 el("ukuran").value = d.ukuran;
 el("satuan").value = d.satuan;
 el("harga").value = d.harga;
 el("toko").value = d.toko || "";
-el("kategori").value = d.kategori || "Lainnya";
+el("jenis").value = d.jenis || "Lainnya";
 el("catatan").value = d.catatan || "";
 updatePreview();
 
@@ -1005,41 +1113,42 @@ toast("Data bulan ini dihapus");
 }
 
 function modeCekHarga(){
-let nama = el("nama").value.trim();
+let kategoriBarang = el("kategoriBarang").value.trim();
+let merek = el("merek").value.trim();
 let ukuran = Number(el("ukuran").value);
 let satuan = el("satuan").value;
 let harga = Number(el("harga").value);
 let per = hargaPerSatuan(ukuran, satuan, harga);
 let normal = normalisasiUkuran(ukuran, satuan);
 
-if(!nama || !ukuran || !harga){
-alert("Isi nama barang, ukuran, dan harga dulu untuk cek harga.");
+if(!kategoriBarang || !ukuran || !harga){
+alert("Isi kategori barang, ukuran, dan harga dulu untuk cek harga.");
 return;
 }
 
 let pembanding = dataBelanja
-.filter(d => d.nama.toLowerCase().includes(nama.toLowerCase()) && d.satuanDasar === normal.satuanDasar)
+.filter(d => (d.kategoriBarang || "").toLowerCase() === kategoriBarang.toLowerCase() && d.satuanDasar === normal.satuanDasar)
 .sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan);
 
 if(!pembanding.length){
-alert(`Belum ada pembanding untuk ${nama}. Harga saat ini: ${rupiah(per)} / ${normal.satuanDasar}`);
+alert(`Belum ada pembanding untuk ${kategoriBarang}.\n\nHarga saat ini: ${rupiah(per)} / ${normal.satuanDasar}`);
 return;
 }
 
 let termurah = pembanding[0];
 
 if(per < termurah.hargaPerSatuan){
-alert(`Harga ini LEBIH MURAH.\n\nSekarang: ${rupiah(per)} / ${normal.satuanDasar}\nSebelumnya termurah: ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}`);
+alert(`Harga ini LEBIH MURAH.\n\nSekarang: ${merek || "-"} ${rupiah(per)} / ${normal.satuanDasar}\nSebelumnya termurah: ${termurah.merek} ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}`);
 }else if(per === termurah.hargaPerSatuan){
 alert(`Harga ini SAMA dengan termurah.\n\nHarga: ${rupiah(per)} / ${normal.satuanDasar}`);
 }else{
 let selisih = per - termurah.hargaPerSatuan;
-alert(`Harga ini LEBIH MAHAL.\n\nSekarang: ${rupiah(per)} / ${normal.satuanDasar}\nTermurah tersimpan: ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}\nSelisih: ${rupiah(selisih)} / ${normal.satuanDasar}`);
+alert(`Harga ini LEBIH MAHAL.\n\nSekarang: ${merek || "-"} ${rupiah(per)} / ${normal.satuanDasar}\nTermurah tersimpan: ${termurah.merek} ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}\nSelisih: ${rupiah(selisih)} / ${normal.satuanDasar}`);
 }
 }
 
 function buatLaporan(){
-let arr = dataBulanAktif().sort((a,b)=>a.nama.localeCompare(b.nama));
+let arr = dataBulanAktif().sort((a,b)=>(a.kategoriBarang || "").localeCompare(b.kategoriBarang || ""));
 let bulan = el("bulan").value || currentMonth();
 
 if(!arr.length){
@@ -1051,22 +1160,22 @@ let total = arr.reduce((sum,d)=>sum + Number(d.harga || 0),0);
 
 let teks = `LAPORAN PENGELUARAN BULANAN NOZIL\n`;
 teks += `Bulan: ${bulan}\n`;
-teks += `Total: ${rupiah(total)}\n`;
+teks += `Total Pengeluaran: ${rupiah(total)}\n`;
 teks += `Jumlah Data: ${arr.length} item\n\n`;
 
 let grouped = {};
 arr.forEach(d=>{
-let key = d.nama;
+let key = d.kategoriBarang;
 if(!grouped[key]) grouped[key] = [];
 grouped[key].push(d);
 });
 
-Object.keys(grouped).sort().forEach(nama=>{
-teks += `• ${nama}\n`;
-grouped[nama]
+Object.keys(grouped).sort().forEach(kategoriBarang=>{
+teks += `• ${kategoriBarang}\n`;
+grouped[kategoriBarang]
 .sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan)
 .forEach((d,i)=>{
-teks += `  ${i+1}. ${angka(d.ukuran)} ${d.satuan} = ${rupiah(d.harga)} | ${rupiah(d.hargaPerSatuan)}/${d.satuanDasar}`;
+teks += `  ${i+1}. ${d.merek} - ${angka(d.ukuran)} ${d.satuan} = ${rupiah(d.harga)} | ${rupiah(d.hargaPerSatuan)}/${d.satuanDasar}`;
 if(i === 0) teks += ` ✅ termurah`;
 if(d.toko) teks += ` | ${d.toko}`;
 teks += `\n`;
@@ -1089,11 +1198,74 @@ function tutupModal(){
 el("modalLaporan").classList.remove("show");
 }
 
+function uniqueValues(field, defaults=[]){
+let fromData = dataBelanja
+.map(d => d[field])
+.filter(Boolean);
+
+return [...new Set([...defaults, ...fromData])];
+}
+
+function setupSuggest(inputId, boxId, getList){
+let input = el(inputId);
+let box = el(boxId);
+
+function show(){
+let q = input.value.trim().toLowerCase();
+let list = getList()
+.filter(x => !q || x.toLowerCase().includes(q))
+.slice(0,8);
+
+if(!q && inputId === "toko"){
+list = list.slice(0,6);
+}
+
+if(!list.length){
+box.classList.remove("show");
+box.innerHTML = "";
+return;
+}
+
+box.innerHTML = list.map(x => `
+<div class="suggestion-item" onclick="pilihSuggest('${inputId}','${escapeJs(x)}','${boxId}')">
+<span>${escapeHtml(x)}</span>
+<small>Pilih</small>
+</div>
+`).join("");
+
+box.classList.add("show");
+}
+
+input.addEventListener("input", show);
+input.addEventListener("focus", show);
+
+document.addEventListener("click", e=>{
+if(!input.parentElement.contains(e.target)){
+box.classList.remove("show");
+}
+});
+}
+
+function pilihSuggest(inputId, value, boxId){
+el(inputId).value = value;
+el(boxId).classList.remove("show");
+updatePreview();
+}
+
+function escapeJs(str){
+return String(str || "").replaceAll("\\","\\\\").replaceAll("'","\\'");
+}
+
 function init(){
 el("tanggal").value = todayDate();
 el("bulan").value = currentMonth();
 
 ambilData();
+
+setupSuggest("kategoriBarang","suggestKategori",()=>uniqueValues("kategoriBarang",defaultKategoriBarang));
+setupSuggest("merek","suggestMerek",()=>uniqueValues("merek",defaultMerek));
+setupSuggest("toko","suggestToko",()=>uniqueValues("toko",defaultToko));
+
 updatePreview();
 renderData();
 
