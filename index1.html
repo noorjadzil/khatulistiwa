@@ -503,6 +503,172 @@ padding:18px;
 box-shadow:0 20px 70px rgba(0,0,0,.5);
 }
 
+
+.result-card{
+background:rgba(255,255,255,.055);
+border:1px solid rgba(255,255,255,.1);
+border-radius:24px;
+padding:16px;
+margin-top:12px;
+}
+
+.result-status{
+text-align:center;
+padding:18px;
+border-radius:24px;
+margin-bottom:12px;
+border:1px solid rgba(255,255,255,.1);
+}
+
+.result-status.good{
+background:linear-gradient(135deg,rgba(22,163,74,.28),rgba(34,197,94,.14));
+border-color:rgba(34,197,94,.35);
+}
+
+.result-status.same{
+background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(250,204,21,.12));
+border-color:rgba(245,158,11,.35);
+}
+
+.result-status.bad{
+background:linear-gradient(135deg,rgba(239,68,68,.25),rgba(248,113,113,.12));
+border-color:rgba(239,68,68,.35);
+}
+
+.result-status.neutral{
+background:linear-gradient(135deg,rgba(37,99,235,.25),rgba(6,182,212,.12));
+border-color:rgba(56,189,248,.30);
+}
+
+.result-status .icon{
+font-size:34px;
+margin-bottom:8px;
+}
+
+.result-status h3{
+font-size:18px;
+margin-bottom:6px;
+}
+
+.result-status p{
+font-size:13px;
+color:#cbd5e1;
+line-height:1.5;
+}
+
+.result-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:12px;
+}
+
+.result-box{
+background:rgba(15,23,42,.55);
+border:1px solid rgba(255,255,255,.075);
+border-radius:18px;
+padding:12px;
+}
+
+.result-box span{
+display:block;
+font-size:11px;
+font-weight:900;
+color:#94a3b8;
+text-transform:uppercase;
+margin-bottom:5px;
+}
+
+.result-box strong{
+font-size:15px;
+line-height:1.35;
+}
+
+.ranking-list{
+margin-top:12px;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.rank-row{
+display:grid;
+grid-template-columns:34px 1fr auto;
+gap:8px;
+align-items:center;
+padding:10px;
+border-radius:16px;
+background:rgba(255,255,255,.045);
+border:1px solid rgba(255,255,255,.07);
+}
+
+.rank-no{
+width:28px;
+height:28px;
+border-radius:99px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+font-weight:900;
+background:rgba(59,130,246,.16);
+color:#bfdbfe;
+}
+
+.rank-row.best .rank-no{
+background:rgba(34,197,94,.18);
+color:#bbf7d0;
+}
+
+.rank-main{
+font-size:13px;
+font-weight:900;
+line-height:1.35;
+}
+
+.rank-main small{
+display:block;
+font-size:11px;
+font-weight:700;
+color:#94a3b8;
+margin-top:2px;
+}
+
+.rank-price{
+font-size:12px;
+font-weight:900;
+color:#e0f2fe;
+text-align:right;
+}
+
+.result-recommendation{
+margin-top:12px;
+padding:14px;
+border-radius:20px;
+background:rgba(124,58,237,.14);
+border:1px solid rgba(167,139,250,.22);
+font-size:13px;
+line-height:1.55;
+color:#e9d5ff;
+}
+
+.result-recommendation strong{
+color:white;
+}
+
+@media(max-width:430px){
+.result-grid{
+grid-template-columns:1fr;
+}
+.rank-row{
+grid-template-columns:30px 1fr;
+}
+.rank-price{
+grid-column:2;
+text-align:left;
+}
+}
+
 .toast{
 position:fixed;
 left:14px;
@@ -723,6 +889,16 @@ grid-template-columns:1fr;
 NOZIL • Smart Expense & Unit Price Tracker
 </div>
 
+</div>
+
+
+<div class="modal" id="modalCekHarga">
+<div class="modal-content">
+<div class="section-title">Analisis Harga</div>
+<div id="hasilCekHarga"></div>
+<button class="green-btn" onclick="simpanData()">💾 Simpan Data Ini</button>
+<button class="secondary-btn" onclick="tutupModalCekHarga()">Tutup</button>
+</div>
 </div>
 
 <div class="modal" id="modalLaporan">
@@ -1118,11 +1294,18 @@ let merek = el("merek").value.trim();
 let ukuran = Number(el("ukuran").value);
 let satuan = el("satuan").value;
 let harga = Number(el("harga").value);
+let toko = el("toko").value.trim();
 let per = hargaPerSatuan(ukuran, satuan, harga);
 let normal = normalisasiUkuran(ukuran, satuan);
 
 if(!kategoriBarang || !ukuran || !harga){
-alert("Isi kategori barang, ukuran, dan harga dulu untuk cek harga.");
+el("hasilCekHarga").innerHTML = `
+<div class="result-status neutral">
+  <div class="icon">ℹ️</div>
+  <h3>Data Belum Lengkap</h3>
+  <p>Isi Nama Barang/Kategori, Ukuran, Satuan, dan Harga terlebih dahulu agar sistem bisa menghitung harga per satuan.</p>
+</div>`;
+el("modalCekHarga").classList.add("show");
 return;
 }
 
@@ -1130,21 +1313,127 @@ let pembanding = dataBelanja
 .filter(d => (d.kategoriBarang || "").toLowerCase() === kategoriBarang.toLowerCase() && d.satuanDasar === normal.satuanDasar)
 .sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan);
 
-if(!pembanding.length){
-alert(`Belum ada pembanding untuk ${kategoriBarang}.\n\nHarga saat ini: ${rupiah(per)} / ${normal.satuanDasar}`);
-return;
-}
+let statusClass = "neutral";
+let icon = "🔎";
+let title = "Belum Ada Pembanding";
+let desc = `Data ${kategoriBarang} belum pernah tersimpan. Harga saat ini akan menjadi data awal untuk pembanding berikutnya.`;
+let rekomendasi = `<strong>Rekomendasi:</strong><br>Simpan data ini agar bulan depan bisa langsung dibandingkan.`;
 
-let termurah = pembanding[0];
+let termurah = null;
+let selisih = 0;
+let persen = 0;
+
+if(pembanding.length){
+termurah = pembanding[0];
+selisih = per - termurah.hargaPerSatuan;
+persen = termurah.hargaPerSatuan ? (selisih / termurah.hargaPerSatuan) * 100 : 0;
 
 if(per < termurah.hargaPerSatuan){
-alert(`Harga ini LEBIH MURAH.\n\nSekarang: ${merek || "-"} ${rupiah(per)} / ${normal.satuanDasar}\nSebelumnya termurah: ${termurah.merek} ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}`);
+statusClass = "good";
+icon = "🟢";
+title = "Harga Ini Lebih Murah";
+desc = `Harga sekarang lebih hemat ${Math.abs(persen).toFixed(2)}% dibanding harga termurah yang pernah tersimpan.`;
+rekomendasi = `<strong>Rekomendasi:</strong><br>Harga ini bagus. Disarankan membeli sekarang dan simpan datanya sebagai harga termurah baru.`;
 }else if(per === termurah.hargaPerSatuan){
-alert(`Harga ini SAMA dengan termurah.\n\nHarga: ${rupiah(per)} / ${normal.satuanDasar}`);
+statusClass = "same";
+icon = "🟡";
+title = "Harga Sama dengan Termurah";
+desc = `Harga sekarang sama dengan harga termurah yang pernah tersimpan.`;
+rekomendasi = `<strong>Rekomendasi:</strong><br>Masih layak dibeli karena tidak lebih mahal dari data terbaik sebelumnya.`;
 }else{
-let selisih = per - termurah.hargaPerSatuan;
-alert(`Harga ini LEBIH MAHAL.\n\nSekarang: ${merek || "-"} ${rupiah(per)} / ${normal.satuanDasar}\nTermurah tersimpan: ${termurah.merek} ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}\nSelisih: ${rupiah(selisih)} / ${normal.satuanDasar}`);
+statusClass = "bad";
+icon = "🔴";
+title = "Harga Ini Lebih Mahal";
+desc = `Harga sekarang lebih mahal ${Math.abs(persen).toFixed(2)}% dibanding harga termurah yang pernah tersimpan.`;
+rekomendasi = `<strong>Rekomendasi:</strong><br>Pertimbangkan mencari harga lain. Data termurah saat ini adalah ${escapeHtml(termurah.merek)} di ${escapeHtml(termurah.toko || "toko sebelumnya")}.`;
 }
+}
+
+let ranking = [...pembanding];
+
+let dataSekarang = {
+id:"cek-sekarang",
+kategoriBarang,
+merek:merek || "Input Sekarang",
+ukuran,
+satuan,
+harga,
+hargaPerSatuan:per,
+toko:toko || "Input Sekarang",
+tanggal:todayDate(),
+satuanDasar:normal.satuanDasar
+};
+
+ranking.push(dataSekarang);
+ranking = ranking
+.sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan)
+.slice(0,5);
+
+let rankingHtml = ranking.map((d,i)=>{
+let isNow = d.id === "cek-sekarang";
+let isBest = i === 0;
+return `
+<div class="rank-row ${isBest ? "best" : ""}">
+  <div class="rank-no">${isBest ? "🏆" : i+1}</div>
+  <div class="rank-main">
+    ${escapeHtml(d.merek || "-")} ${isNow ? "• Input Sekarang" : ""}
+    <small>${angka(d.ukuran)} ${d.satuan} • ${escapeHtml(d.toko || "-")}</small>
+  </div>
+  <div class="rank-price">${rupiah(d.hargaPerSatuan)} / ${normal.satuanDasar}</div>
+</div>`;
+}).join("");
+
+let pembandingHtml = termurah ? `
+<div class="result-box">
+  <span>Harga Termurah Tersimpan</span>
+  <strong>${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}<br>${escapeHtml(termurah.merek)} • ${escapeHtml(termurah.toko || "-")}</strong>
+</div>
+<div class="result-box">
+  <span>Selisih</span>
+  <strong>${selisih > 0 ? "+" : ""}${rupiah(selisih)} / ${normal.satuanDasar}<br>${persen > 0 ? "+" : ""}${persen.toFixed(2)}%</strong>
+</div>
+` : `
+<div class="result-box">
+  <span>Pembanding</span>
+  <strong>Belum tersedia</strong>
+</div>
+<div class="result-box">
+  <span>Status</span>
+  <strong>Data awal</strong>
+</div>
+`;
+
+el("hasilCekHarga").innerHTML = `
+<div class="result-status ${statusClass}">
+  <div class="icon">${icon}</div>
+  <h3>${title}</h3>
+  <p>${desc}</p>
+</div>
+
+<div class="result-card">
+  <div class="result-grid">
+    <div class="result-box">
+      <span>Barang</span>
+      <strong>${escapeHtml(kategoriBarang)}<br>${escapeHtml(merek || "-")}</strong>
+    </div>
+    <div class="result-box">
+      <span>Harga Saat Ini</span>
+      <strong>${rupiah(per)} / ${normal.satuanDasar}<br>${angka(ukuran)} ${satuan} = ${rupiah(harga)}</strong>
+    </div>
+    ${pembandingHtml}
+  </div>
+
+  <div class="result-recommendation">${rekomendasi}</div>
+
+  <div class="section-title">Ranking Harga</div>
+  <div class="ranking-list">${rankingHtml}</div>
+</div>`;
+
+el("modalCekHarga").classList.add("show");
+}
+
+function tutupModalCekHarga(){
+el("modalCekHarga").classList.remove("show");
 }
 
 function buatLaporan(){
