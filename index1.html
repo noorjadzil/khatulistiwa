@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOZIL - Pengeluaran Bulanan</title>
+<link rel="manifest" href="manifest.json">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+--bg:#020617;
+--navy:#0f172a;
+--card:rgba(255,255,255,.075);
+--border:rgba(255,255,255,.11);
+--muted:#94a3b8;
+--text:#f8fafc;
+--blue:#2563eb;
+--cyan:#06b6d4;
+--green:#22c55e;
+--amber:#f59e0b;
+--red:#ef4444;
+--purple:#7c3aed;
+}
+
+body{
+font-family:'Segoe UI',system-ui,sans-serif;
+background:var(--bg);
+min-height:100vh;
+color:var(--text);
+overflow-x:hidden;
+padding-bottom:25px;
+}
+
+.bg{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top left,#2563eb55,transparent 35%),
+radial-gradient(circle at 80% 20%,#7c3aed35,transparent 30%),
+radial-gradient(circle at bottom right,#06b6d455,transparent 35%),
+linear-gradient(135deg,#020617,#0f172a,#111827);
+z-index:-3;
+}
+
+.blur1,.blur2,.blur3{
+position:fixed;
+border-radius:50%;
+filter:blur(100px);
+z-index:-2;
+opacity:.8;
+}
+
+.blur1{
+width:250px;
+height:250px;
+background:#2563eb66;
+top:-70px;
+left:-60px;
+}
+
+.blur2{
+width:260px;
+height:260px;
+background:#06b6d455;
+right:-80px;
+bottom:-70px;
+}
+
+.blur3{
+width:180px;
+height:180px;
+background:#7c3aed55;
+right:20px;
+top:220px;
+}
+
+.header{
+padding:28px 18px 10px;
+text-align:center;
+}
+
+.logo{
+font-size:32px;
+font-weight:950;
+letter-spacing:3px;
+background:linear-gradient(90deg,#60a5fa,#22d3ee,#a78bfa);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.sub{
+margin-top:8px;
+font-size:13px;
+color:#cbd5e1;
+line-height:1.5;
+}
+
+.container{
+max-width:520px;
+margin:auto;
+padding:14px;
+}
+
+.card{
+background:var(--card);
+backdrop-filter:blur(22px);
+border:1px solid var(--border);
+border-radius:30px;
+padding:20px;
+box-shadow:
+0 12px 42px rgba(0,0,0,.38),
+inset 0 1px 0 rgba(255,255,255,.06);
+margin-bottom:15px;
+}
+
+.hero{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:14px;
+}
+
+.stat{
+background:rgba(255,255,255,.065);
+border:1px solid rgba(255,255,255,.09);
+border-radius:22px;
+padding:15px;
+}
+
+.stat span{
+display:block;
+font-size:11px;
+color:var(--muted);
+font-weight:800;
+letter-spacing:.5px;
+text-transform:uppercase;
+margin-bottom:6px;
+}
+
+.stat strong{
+font-size:19px;
+line-height:1.2;
+}
+
+.section-title{
+font-size:12px;
+font-weight:900;
+letter-spacing:1.2px;
+color:#a5b4fc;
+margin:20px 0 10px;
+text-transform:uppercase;
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.section-title:before{
+content:"";
+width:8px;
+height:8px;
+border-radius:99px;
+background:linear-gradient(135deg,#60a5fa,#22d3ee);
+box-shadow:0 0 18px #22d3ee;
+}
+
+label{
+display:block;
+font-size:13px;
+font-weight:800;
+color:#cbd5e1;
+margin-bottom:8px;
+}
+
+input,select,textarea{
+width:100%;
+background:rgba(255,255,255,.065);
+border:1px solid rgba(255,255,255,.1);
+border-radius:18px;
+padding:14px;
+font-size:15px;
+color:white;
+outline:none;
+transition:.2s;
+}
+
+textarea{
+resize:none;
+min-height:80px;
+line-height:1.5;
+}
+
+input:focus,select:focus,textarea:focus{
+border-color:#38bdf8;
+box-shadow:0 0 0 4px rgba(56,189,248,.14);
+}
+
+option{
+background:#0f172a;
+color:white;
+}
+
+.grid-2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.grid-3{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:10px;
+}
+
+.input-group{
+margin-bottom:12px;
+}
+
+.live-box{
+border-radius:24px;
+padding:17px;
+background:
+linear-gradient(135deg,rgba(37,99,235,.28),rgba(6,182,212,.18));
+border:1px solid rgba(125,211,252,.22);
+margin-top:10px;
+}
+
+.live-row{
+display:flex;
+justify-content:space-between;
+gap:14px;
+align-items:center;
+padding:8px 0;
+border-bottom:1px dashed rgba(255,255,255,.12);
+}
+
+.live-row:last-child{
+border-bottom:none;
+}
+
+.live-row span{
+color:#cbd5e1;
+font-size:13px;
+}
+
+.live-row strong{
+text-align:right;
+font-size:14px;
+}
+
+button{
+width:100%;
+border:none;
+border-radius:20px;
+padding:15px;
+margin-top:12px;
+font-weight:900;
+font-size:15px;
+color:white;
+cursor:pointer;
+transition:.2s;
+}
+
+button:active{
+transform:scale(.98);
+}
+
+.primary-btn{
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+box-shadow:0 10px 30px rgba(37,99,235,.35);
+}
+
+.green-btn{
+background:linear-gradient(135deg,#16a34a,#22c55e);
+box-shadow:0 10px 25px rgba(34,197,94,.25);
+}
+
+.purple-btn{
+background:linear-gradient(135deg,#7c3aed,#2563eb);
+box-shadow:0 10px 25px rgba(124,58,237,.28);
+}
+
+.secondary-btn{
+background:rgba(255,255,255,.07);
+border:1px solid rgba(255,255,255,.1);
+}
+
+.danger-btn{
+background:rgba(239,68,68,.13);
+border:1px solid rgba(239,68,68,.28);
+color:#fecaca;
+}
+
+.button-row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.list{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.item-card{
+background:rgba(255,255,255,.055);
+border:1px solid rgba(255,255,255,.09);
+border-radius:24px;
+padding:15px;
+position:relative;
+overflow:hidden;
+}
+
+.item-card.best{
+border-color:rgba(34,197,94,.55);
+box-shadow:0 0 0 1px rgba(34,197,94,.12),0 10px 30px rgba(34,197,94,.08);
+}
+
+.item-top{
+display:flex;
+justify-content:space-between;
+gap:12px;
+align-items:flex-start;
+margin-bottom:10px;
+}
+
+.item-name{
+font-weight:900;
+font-size:16px;
+line-height:1.35;
+}
+
+.badge{
+font-size:11px;
+font-weight:900;
+padding:6px 9px;
+border-radius:99px;
+white-space:nowrap;
+}
+
+.badge.best{
+background:rgba(34,197,94,.16);
+color:#bbf7d0;
+border:1px solid rgba(34,197,94,.32);
+}
+
+.badge.type{
+background:rgba(59,130,246,.15);
+color:#bfdbfe;
+border:1px solid rgba(59,130,246,.25);
+}
+
+.meta{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin-top:10px;
+}
+
+.meta div{
+background:rgba(15,23,42,.45);
+border:1px solid rgba(255,255,255,.065);
+border-radius:16px;
+padding:10px;
+}
+
+.meta span{
+display:block;
+font-size:11px;
+color:#94a3b8;
+margin-bottom:4px;
+font-weight:800;
+}
+
+.meta strong{
+font-size:14px;
+}
+
+.card-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin-top:12px;
+}
+
+.small-btn{
+padding:10px;
+border-radius:14px;
+margin-top:0;
+font-size:13px;
+}
+
+.note{
+font-size:12px;
+color:#94a3b8;
+line-height:1.5;
+margin-top:8px;
+}
+
+.searchbar{
+display:grid;
+grid-template-columns:1fr 120px;
+gap:8px;
+margin-bottom:12px;
+}
+
+.empty{
+text-align:center;
+color:#94a3b8;
+font-size:13px;
+line-height:1.6;
+padding:20px 10px;
+border:1px dashed rgba(255,255,255,.14);
+border-radius:22px;
+}
+
+.footer{
+text-align:center;
+font-size:12px;
+color:#64748b;
+padding:22px 10px;
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(2,6,23,.78);
+backdrop-filter:blur(10px);
+z-index:20;
+display:none;
+align-items:flex-end;
+padding:12px;
+}
+
+.modal.show{
+display:flex;
+}
+
+.modal-content{
+width:100%;
+max-width:520px;
+margin:auto;
+background:#0f172a;
+border:1px solid rgba(255,255,255,.12);
+border-radius:28px;
+padding:18px;
+box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.toast{
+position:fixed;
+left:14px;
+right:14px;
+bottom:18px;
+background:#0f172a;
+border:1px solid rgba(34,197,94,.35);
+box-shadow:0 15px 45px rgba(0,0,0,.45);
+color:white;
+border-radius:20px;
+padding:14px;
+font-weight:800;
+display:none;
+z-index:30;
+text-align:center;
+}
+
+.toast.show{
+display:block;
+animation:pop .25s ease;
+}
+
+@keyframes pop{
+from{transform:translateY(10px);opacity:0}
+to{transform:translateY(0);opacity:1}
+}
+
+@media(max-width:430px){
+.card{
+padding:17px;
+border-radius:26px;
+}
+.grid-3{
+grid-template-columns:1fr;
+}
+.logo{
+font-size:30px;
+}
+.hero{
+grid-template-columns:1fr;
+}
+.searchbar{
+grid-template-columns:1fr;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<div class="blur1"></div>
+<div class="blur2"></div>
+<div class="blur3"></div>
+
+<div class="header">
+<div class="logo">NOZIL</div>
+<div class="sub">Aplikasi Catatan Pengeluaran & Pembanding Harga Satuan</div>
+</div>
+
+<div class="container">
+
+<div class="hero">
+<div class="stat">
+<span>Total Bulan Ini</span>
+<strong id="totalBulan">Rp 0</strong>
+</div>
+<div class="stat">
+<span>Jumlah Belanja</span>
+<strong id="jumlahData">0 item</strong>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">Input Belanja</div>
+
+<div class="grid-2">
+<div class="input-group">
+<label>Bulan</label>
+<input type="month" id="bulan">
+</div>
+
+<div class="input-group">
+<label>Tanggal Belanja</label>
+<input type="date" id="tanggal">
+</div>
+</div>
+
+<div class="input-group">
+<label>Nama Barang</label>
+<input type="text" id="nama" placeholder="Contoh: Minyak Goreng">
+</div>
+
+<div class="grid-3">
+<div class="input-group">
+<label>Ukuran</label>
+<input type="number" id="ukuran" placeholder="1000" inputmode="decimal">
+</div>
+
+<div class="input-group">
+<label>Satuan</label>
+<select id="satuan">
+<option value="ml">ml</option>
+<option value="gram">gram</option>
+<option value="pcs">pcs</option>
+<option value="liter">liter</option>
+<option value="kg">kg</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Harga</label>
+<input type="number" id="harga" placeholder="20000" inputmode="numeric">
+</div>
+</div>
+
+<div class="grid-2">
+<div class="input-group">
+<label>Toko / Tempat</label>
+<input type="text" id="toko" placeholder="Contoh: Indomaret">
+</div>
+
+<div class="input-group">
+<label>Kategori</label>
+<select id="kategori">
+<option>Kebutuhan Dapur</option>
+<option>Sembako</option>
+<option>Minuman</option>
+<option>Makanan</option>
+<option>Sabun & Kebersihan</option>
+<option>Transport</option>
+<option>Listrik / Pulsa</option>
+<option>Lainnya</option>
+</select>
+</div>
+</div>
+
+<div class="input-group">
+<label>Catatan</label>
+<textarea id="catatan" placeholder="Contoh: Promo, beli 2, rasa lebih enak, kualitas bagus..."></textarea>
+</div>
+
+<div class="live-box">
+<div class="live-row">
+<span>Harga asli</span>
+<strong id="previewHarga">Rp 0</strong>
+</div>
+<div class="live-row">
+<span>Harga per satuan</span>
+<strong id="previewSatuan">Rp 0 / ml</strong>
+</div>
+<div class="live-row">
+<span>Keterangan</span>
+<strong id="previewKet">Masukkan ukuran dan harga</strong>
+</div>
+</div>
+
+<button class="primary-btn" onclick="simpanData()">💾 Simpan Belanja</button>
+
+<div class="button-row">
+<button class="secondary-btn" onclick="resetForm()">↺ Reset Form</button>
+<button class="green-btn" onclick="modeCekHarga()">🔎 Cek Harga</button>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">Ringkasan Bulanan</div>
+
+<div class="grid-2">
+<div class="stat">
+<span>Termurah</span>
+<strong id="termurah">-</strong>
+</div>
+<div class="stat">
+<span>Termahal</span>
+<strong id="termahal">-</strong>
+</div>
+</div>
+
+<div class="button-row">
+<button class="purple-btn" onclick="buatLaporan()">📋 Buat Laporan</button>
+<button class="secondary-btn" onclick="window.location.href='index.html'">🏠 Kembali</button>
+</div>
+</div>
+
+<div class="card">
+<div class="section-title">Data Belanja</div>
+
+<div class="searchbar">
+<input type="text" id="cari" placeholder="Cari barang / toko..." oninput="renderData()">
+<select id="filterSatuan" onchange="renderData()">
+<option value="">Semua satuan</option>
+<option value="ml">ml</option>
+<option value="gram">gram</option>
+<option value="pcs">pcs</option>
+<option value="liter">liter</option>
+<option value="kg">kg</option>
+</select>
+</div>
+
+<div id="listData" class="list"></div>
+
+<button class="danger-btn" onclick="hapusSemua()">🗑️ Hapus Data Bulan Ini</button>
+</div>
+
+<div class="footer">
+NOZIL • Expense & Unit Price Tracker
+</div>
+
+</div>
+
+<div class="modal" id="modalLaporan">
+<div class="modal-content">
+<div class="section-title">Laporan Siap Salin</div>
+<textarea id="teksLaporan" style="min-height:260px"></textarea>
+<button class="green-btn" onclick="salinLaporan()">📋 Salin Laporan</button>
+<button class="secondary-btn" onclick="tutupModal()">Tutup</button>
+</div>
+</div>
+
+<div class="toast" id="toast">Berhasil</div>
+
+<script>
+const STORAGE_KEY = "nozil_pengeluaran_bulanan_v1";
+
+let dataBelanja = [];
+let editId = null;
+
+const el = id => document.getElementById(id);
+
+function rupiah(n){
+return new Intl.NumberFormat("id-ID",{
+style:"currency",
+currency:"IDR",
+maximumFractionDigits:2
+}).format(Number(n || 0));
+}
+
+function angka(n){
+return new Intl.NumberFormat("id-ID",{
+maximumFractionDigits:4
+}).format(Number(n || 0));
+}
+
+function todayDate(){
+let d = new Date();
+let y = d.getFullYear();
+let m = String(d.getMonth()+1).padStart(2,"0");
+let day = String(d.getDate()).padStart(2,"0");
+return `${y}-${m}-${day}`;
+}
+
+function currentMonth(){
+let d = new Date();
+let y = d.getFullYear();
+let m = String(d.getMonth()+1).padStart(2,"0");
+return `${y}-${m}`;
+}
+
+function normalisasiUkuran(ukuran, satuan){
+ukuran = Number(ukuran || 0);
+
+if(satuan === "liter"){
+return {nilai: ukuran * 1000, satuanDasar:"ml"};
+}
+
+if(satuan === "kg"){
+return {nilai: ukuran * 1000, satuanDasar:"gram"};
+}
+
+return {nilai: ukuran, satuanDasar:satuan};
+}
+
+function hargaPerSatuan(ukuran, satuan, harga){
+let normal = normalisasiUkuran(ukuran, satuan);
+if(!normal.nilai || !harga) return 0;
+return Number(harga) / normal.nilai;
+}
+
+function ambilData(){
+try{
+dataBelanja = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+}catch(e){
+dataBelanja = [];
+}
+}
+
+function simpanLocal(){
+localStorage.setItem(STORAGE_KEY, JSON.stringify(dataBelanja));
+}
+
+function toast(msg){
+let t = el("toast");
+t.textContent = msg;
+t.classList.add("show");
+setTimeout(()=>t.classList.remove("show"),1800);
+}
+
+function updatePreview(){
+let ukuran = Number(el("ukuran").value || 0);
+let satuan = el("satuan").value;
+let harga = Number(el("harga").value || 0);
+let normal = normalisasiUkuran(ukuran, satuan);
+let per = hargaPerSatuan(ukuran, satuan, harga);
+
+el("previewHarga").textContent = rupiah(harga);
+el("previewSatuan").textContent = `${rupiah(per)} / ${normal.satuanDasar}`;
+
+if(!ukuran || !harga){
+el("previewKet").textContent = "Masukkan ukuran dan harga";
+}else if(per <= 10){
+el("previewKet").textContent = "Murah untuk dibandingkan";
+}else if(per <= 30){
+el("previewKet").textContent = "Sedang, cek pembanding";
+}else{
+el("previewKet").textContent = "Cukup mahal, bandingkan lagi";
+}
+}
+
+["ukuran","satuan","harga"].forEach(id=>{
+el(id).addEventListener("input", updatePreview);
+el(id).addEventListener("change", updatePreview);
+});
+
+function resetForm(){
+editId = null;
+el("nama").value = "";
+el("ukuran").value = "";
+el("satuan").value = "ml";
+el("harga").value = "";
+el("toko").value = "";
+el("kategori").value = "Kebutuhan Dapur";
+el("catatan").value = "";
+el("tanggal").value = todayDate();
+updatePreview();
+}
+
+function simpanData(){
+let nama = el("nama").value.trim();
+let ukuran = Number(el("ukuran").value);
+let satuan = el("satuan").value;
+let harga = Number(el("harga").value);
+let toko = el("toko").value.trim();
+let kategori = el("kategori").value;
+let catatan = el("catatan").value.trim();
+let tanggal = el("tanggal").value || todayDate();
+let bulan = el("bulan").value || currentMonth();
+
+if(!nama){
+alert("Nama barang belum diisi");
+return;
+}
+
+if(!ukuran || ukuran <= 0){
+alert("Ukuran harus diisi lebih dari 0");
+return;
+}
+
+if(!harga || harga <= 0){
+alert("Harga harus diisi lebih dari 0");
+return;
+}
+
+let normal = normalisasiUkuran(ukuran, satuan);
+
+let item = {
+id: editId || Date.now().toString(),
+nama,
+ukuran,
+satuan,
+ukuranDasar: normal.nilai,
+satuanDasar: normal.satuanDasar,
+harga,
+hargaPerSatuan: hargaPerSatuan(ukuran, satuan, harga),
+toko,
+kategori,
+catatan,
+tanggal,
+bulan,
+createdAt: new Date().toISOString()
+};
+
+if(editId){
+dataBelanja = dataBelanja.map(d => d.id === editId ? item : d);
+toast("Data berhasil diperbarui");
+}else{
+dataBelanja.push(item);
+toast("Data berhasil disimpan");
+}
+
+simpanLocal();
+resetForm();
+renderData();
+}
+
+function dataBulanAktif(){
+let bulan = el("bulan").value || currentMonth();
+return dataBelanja.filter(d => d.bulan === bulan);
+}
+
+function renderData(){
+let list = el("listData");
+let cari = el("cari").value.toLowerCase();
+let satuan = el("filterSatuan").value;
+
+let arr = dataBulanAktif().filter(d=>{
+let cocokCari = !cari || 
+d.nama.toLowerCase().includes(cari) ||
+(d.toko || "").toLowerCase().includes(cari) ||
+(d.kategori || "").toLowerCase().includes(cari);
+
+let cocokSatuan = !satuan || d.satuanDasar === satuan || d.satuan === satuan;
+
+return cocokCari && cocokSatuan;
+});
+
+arr.sort((a,b)=>{
+if(a.nama.toLowerCase() === b.nama.toLowerCase()){
+return a.hargaPerSatuan - b.hargaPerSatuan;
+}
+return a.nama.localeCompare(b.nama);
+});
+
+let total = dataBulanAktif().reduce((sum,d)=>sum + Number(d.harga || 0),0);
+el("totalBulan").textContent = rupiah(total);
+el("jumlahData").textContent = `${dataBulanAktif().length} item`;
+
+if(dataBulanAktif().length){
+let sorted = [...dataBulanAktif()].sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan);
+el("termurah").textContent = `${sorted[0].nama} • ${rupiah(sorted[0].hargaPerSatuan)}/${sorted[0].satuanDasar}`;
+el("termahal").textContent = `${sorted[sorted.length-1].nama} • ${rupiah(sorted[sorted.length-1].hargaPerSatuan)}/${sorted[sorted.length-1].satuanDasar}`;
+}else{
+el("termurah").textContent = "-";
+el("termahal").textContent = "-";
+}
+
+if(!arr.length){
+list.innerHTML = `<div class="empty">Belum ada data untuk bulan ini.<br>Masukkan contoh: Minyak Goreng 1000 ml harga 20000.</div>`;
+return;
+}
+
+let minByName = {};
+arr.forEach(d=>{
+let key = d.nama.toLowerCase().trim() + "_" + d.satuanDasar;
+if(!minByName[key] || d.hargaPerSatuan < minByName[key]){
+minByName[key] = d.hargaPerSatuan;
+}
+});
+
+list.innerHTML = arr.map(d=>{
+let key = d.nama.toLowerCase().trim() + "_" + d.satuanDasar;
+let best = d.hargaPerSatuan === minByName[key];
+
+return `
+<div class="item-card ${best ? "best" : ""}">
+  <div class="item-top">
+    <div>
+      <div class="item-name">${escapeHtml(d.nama)}</div>
+      <div class="note">${formatTanggal(d.tanggal)} • ${escapeHtml(d.toko || "Tanpa toko")}</div>
+    </div>
+    <span class="badge ${best ? "best" : "type"}">${best ? "TERMURAH" : d.satuanDasar}</span>
+  </div>
+
+  <div class="meta">
+    <div>
+      <span>Ukuran</span>
+      <strong>${angka(d.ukuran)} ${d.satuan}</strong>
+    </div>
+    <div>
+      <span>Harga</span>
+      <strong>${rupiah(d.harga)}</strong>
+    </div>
+    <div>
+      <span>Harga / ${d.satuanDasar}</span>
+      <strong>${rupiah(d.hargaPerSatuan)}</strong>
+    </div>
+    <div>
+      <span>Kategori</span>
+      <strong>${escapeHtml(d.kategori)}</strong>
+    </div>
+  </div>
+
+  ${d.catatan ? `<div class="note">Catatan: ${escapeHtml(d.catatan)}</div>` : ""}
+
+  <div class="card-actions">
+    <button class="small-btn secondary-btn" onclick="editData('${d.id}')">✏️ Edit</button>
+    <button class="small-btn danger-btn" onclick="hapusData('${d.id}')">🗑️ Hapus</button>
+  </div>
+</div>`;
+}).join("");
+}
+
+function escapeHtml(str){
+return String(str || "")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+}
+
+function formatTanggal(tgl){
+if(!tgl) return "-";
+let d = new Date(tgl + "T00:00:00");
+let hari = ["Ahad","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+let bulan = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+return `${hari[d.getDay()]}, ${d.getDate()} ${bulan[d.getMonth()]}`;
+}
+
+function editData(id){
+let d = dataBelanja.find(x=>x.id === id);
+if(!d) return;
+
+editId = id;
+el("bulan").value = d.bulan;
+el("tanggal").value = d.tanggal;
+el("nama").value = d.nama;
+el("ukuran").value = d.ukuran;
+el("satuan").value = d.satuan;
+el("harga").value = d.harga;
+el("toko").value = d.toko || "";
+el("kategori").value = d.kategori || "Lainnya";
+el("catatan").value = d.catatan || "";
+updatePreview();
+
+window.scrollTo({top:0,behavior:"smooth"});
+toast("Mode edit aktif");
+}
+
+function hapusData(id){
+if(!confirm("Hapus data ini?")) return;
+dataBelanja = dataBelanja.filter(d=>d.id !== id);
+simpanLocal();
+renderData();
+toast("Data dihapus");
+}
+
+function hapusSemua(){
+let bulan = el("bulan").value || currentMonth();
+let arr = dataBulanAktif();
+if(!arr.length){
+toast("Tidak ada data bulan ini");
+return;
+}
+if(!confirm("Hapus semua data bulan ini?")) return;
+dataBelanja = dataBelanja.filter(d=>d.bulan !== bulan);
+simpanLocal();
+renderData();
+toast("Data bulan ini dihapus");
+}
+
+function modeCekHarga(){
+let nama = el("nama").value.trim();
+let ukuran = Number(el("ukuran").value);
+let satuan = el("satuan").value;
+let harga = Number(el("harga").value);
+let per = hargaPerSatuan(ukuran, satuan, harga);
+let normal = normalisasiUkuran(ukuran, satuan);
+
+if(!nama || !ukuran || !harga){
+alert("Isi nama barang, ukuran, dan harga dulu untuk cek harga.");
+return;
+}
+
+let pembanding = dataBelanja
+.filter(d => d.nama.toLowerCase().includes(nama.toLowerCase()) && d.satuanDasar === normal.satuanDasar)
+.sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan);
+
+if(!pembanding.length){
+alert(`Belum ada pembanding untuk ${nama}. Harga saat ini: ${rupiah(per)} / ${normal.satuanDasar}`);
+return;
+}
+
+let termurah = pembanding[0];
+
+if(per < termurah.hargaPerSatuan){
+alert(`Harga ini LEBIH MURAH.\n\nSekarang: ${rupiah(per)} / ${normal.satuanDasar}\nSebelumnya termurah: ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}`);
+}else if(per === termurah.hargaPerSatuan){
+alert(`Harga ini SAMA dengan termurah.\n\nHarga: ${rupiah(per)} / ${normal.satuanDasar}`);
+}else{
+let selisih = per - termurah.hargaPerSatuan;
+alert(`Harga ini LEBIH MAHAL.\n\nSekarang: ${rupiah(per)} / ${normal.satuanDasar}\nTermurah tersimpan: ${rupiah(termurah.hargaPerSatuan)} / ${normal.satuanDasar}\nSelisih: ${rupiah(selisih)} / ${normal.satuanDasar}`);
+}
+}
+
+function buatLaporan(){
+let arr = dataBulanAktif().sort((a,b)=>a.nama.localeCompare(b.nama));
+let bulan = el("bulan").value || currentMonth();
+
+if(!arr.length){
+toast("Belum ada data laporan");
+return;
+}
+
+let total = arr.reduce((sum,d)=>sum + Number(d.harga || 0),0);
+
+let teks = `LAPORAN PENGELUARAN BULANAN NOZIL\n`;
+teks += `Bulan: ${bulan}\n`;
+teks += `Total: ${rupiah(total)}\n`;
+teks += `Jumlah Data: ${arr.length} item\n\n`;
+
+let grouped = {};
+arr.forEach(d=>{
+let key = d.nama;
+if(!grouped[key]) grouped[key] = [];
+grouped[key].push(d);
+});
+
+Object.keys(grouped).sort().forEach(nama=>{
+teks += `• ${nama}\n`;
+grouped[nama]
+.sort((a,b)=>a.hargaPerSatuan-b.hargaPerSatuan)
+.forEach((d,i)=>{
+teks += `  ${i+1}. ${angka(d.ukuran)} ${d.satuan} = ${rupiah(d.harga)} | ${rupiah(d.hargaPerSatuan)}/${d.satuanDasar}`;
+if(i === 0) teks += ` ✅ termurah`;
+if(d.toko) teks += ` | ${d.toko}`;
+teks += `\n`;
+});
+teks += `\n`;
+});
+
+el("teksLaporan").value = teks;
+el("modalLaporan").classList.add("show");
+}
+
+function salinLaporan(){
+let t = el("teksLaporan");
+t.select();
+document.execCommand("copy");
+toast("Laporan berhasil disalin");
+}
+
+function tutupModal(){
+el("modalLaporan").classList.remove("show");
+}
+
+function init(){
+el("tanggal").value = todayDate();
+el("bulan").value = currentMonth();
+
+ambilData();
+updatePreview();
+renderData();
+
+el("bulan").addEventListener("change", renderData);
+}
+
+init();
+</script>
+
+</body>
+</html>
